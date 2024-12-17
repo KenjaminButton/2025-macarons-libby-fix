@@ -91,7 +91,7 @@ const Cart = () => {
                     <div>
                       <span>{item.name}</span>
                       <span>
-                        {item.quantity} @ ${eUSLocale(item.price)} 
+                        : Quantity of {item.quantity} @ ${eUSLocale(item.price)} each 
                         {/* Displaying item quantity and formatted price. */}
                       </span>
                     </div>
