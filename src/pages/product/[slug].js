@@ -89,7 +89,7 @@ const ProductDetails = ({ product, products }) => {
               minimumFractionDigits: 2,
             })}
           </p>
-          per box of 12
+          per box of 12: 
           <div className="quantity">
             <h3>Quantity:</h3>
             <p className="quantity-desc">

@@ -1,13 +1,13 @@
 import React from "react";
 import Link from "next/link";
 import PaymentIcons from "../components/PaymentIcons";
+import { useStateContext } from "../context/StateContext";
 
 // import MiniCart from "../MiniCart";
-// import { useStateContext } from "../../../context/StateContext";
 import { AiFillInstagram, AiOutlineTwitter } from "react-icons/ai";
 
 export default function Footer ()  {
-  // const { showCart } = useStateContext();
+  const { showCart } = useStateContext();
 
   return (
     <>
