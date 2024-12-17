@@ -1,4 +1,8 @@
+// Importing React and the `useState` hook for managing component state
 import React, { useState } from "react";
+
+// Importing `useStateContext` to utilize global state and actions within the context
+import { useStateContext } from '../../context/StateContext'
 
 // Importing icons for UI elements such as plus and minus symbols, and star ratings
 import {
@@ -10,8 +14,11 @@ import {
 
 // Importing client and urlFor from a library to handle content fetching and image URLs
 import { client, urlFor } from "../../lib/client";
-import { Product } from "../../components"; // Importing the Product component for displaying related products
 
+// Importing the Product component for displaying related products
+import { Product } from "../../components";
+
+// Importing another component for additional product information
 import { Info } from "../../components";
 
 // Main component for displaying product details
@@ -19,7 +26,21 @@ const ProductDetails = ({ product, products }) => {
 
   // Destructuring product properties for easy access
   const { image, name, details, price, sku, ingredients, weight, delivery } = product;
-  const [index, setIndex] = useState(0); // State to manage the currently displayed image index
+
+  // State to manage the currently displayed image index
+  const [index, setIndex] = useState(0);
+  
+  // Logging the context values for debugging purposes
+  console.log('useStateContext:::', useStateContext());
+
+  // Extracting functions and state from the context for quantity management and cart actions
+  const { decQty, incQty, qty, onAdd, setShowCart } = useStateContext();
+  
+  // Function to handle immediate purchase actions
+  const handleBuyNow = () => {
+    onAdd(product, qty);  // Adding the product to cart with specified quantity
+    setShowCart(true);    // Displaying the cart immediately
+  };
 
   return (
     <div>
@@ -72,22 +93,34 @@ const ProductDetails = ({ product, products }) => {
           <div className="quantity">
             <h3>Quantity:</h3>
             <p className="quantity-desc">
-              {/* Icons for adjusting the quantity of the product */}
-              <span className="minus">
+              <span className="minus" onClick={decQty}>
                 <AiOutlineMinus />
               </span>
-              <span className="num">1</span> {/* Initial quantity display */}
-              <span className="plus">
+              <span className="num">{qty}</span>
+              <span className="plus" onClick={incQty}>
                 <AiOutlinePlus />
               </span>
             </p>
           </div>
           <div className="sku">SKU: {sku}</div> {/* Displaying the SKU of the product */}
+          <div className="buttons">
+            <button
+              type="button"
+              className="add-to-cart"
+              onClick={() => onAdd(product, qty)}
+            >
+              Add to Cart
+            </button>
+            <button type="button" className="buy-now" onClick={handleBuyNow}>
+              Buy Now
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="maylike-products-wrapper">
-      <Info ingredients={ingredients} weight={weight} delivery={delivery} />
+        {/* Displaying additional information via the Info component */}
+        <Info ingredients={ingredients} weight={weight} delivery={delivery} />
 
         <h2>You may also like</h2> {/* Section heading for related products */}
         <div className="marquee">
@@ -105,6 +138,7 @@ const ProductDetails = ({ product, products }) => {
 
 // Function to generate static paths for Next.js dynamic routes based on product slugs
 export const getStaticPaths = async () => {
+  // GraphQL-like query to fetch product slugs from the content database
   const query = `*[_type == "product"] {                  
     slug {               
       current                       
@@ -131,16 +165,16 @@ export const getStaticPaths = async () => {
 // Function to fetch static props for a specific product based on the slug parameter
 export const getStaticProps = async ({ params: { slug } }) => {
   // Constructing a query to fetch a single product that matches the provided slug
-  const query = `*[_type == "product" && slug.current == '${slug}'][0]`; 
-  
+  const query = `*[_type == "product" && slug.current == '${slug}'][0]`;
+
   // Constructing a query to fetch all products, which will be used for related product suggestions
-  const productsQuery = '*[_type == "product"]'; 
-  
+  const productsQuery = '*[_type == "product"]';
+
   // Fetching the specific product using the constructed query
-  const product = await client.fetch(query); 
-  
+  const product = await client.fetch(query);
+
   // Fetching all products using the second constructed query
-  const products = await client.fetch(productsQuery); 
+  const products = await client.fetch(productsQuery);
 
   // Returning the fetched product and all products as props to be used in the component
   return {
