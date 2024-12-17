@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-// import { client } from "../lib/client";
+import { client } from "../../lib/client";
 import PerfectBanner from "../components/PerfectBanner";
 import Newsletter from "../components/Newsletter";
 import { Inter } from 'next/font/google';
