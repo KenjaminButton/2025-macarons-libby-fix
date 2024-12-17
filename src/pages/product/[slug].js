@@ -12,6 +12,8 @@ import {
 import { client, urlFor } from "../../lib/client";
 import { Product } from "../../components"; // Importing the Product component for displaying related products
 
+import { Info } from "../../components";
+
 // Main component for displaying product details
 const ProductDetails = ({ product, products }) => {
 
@@ -85,6 +87,8 @@ const ProductDetails = ({ product, products }) => {
       </div>
 
       <div className="maylike-products-wrapper">
+      <Info ingredients={ingredients} weight={weight} delivery={delivery} />
+
         <h2>You may also like</h2> {/* Section heading for related products */}
         <div className="marquee">
           <div className="maylike-products-container track">

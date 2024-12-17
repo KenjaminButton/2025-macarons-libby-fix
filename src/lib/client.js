@@ -9,7 +9,7 @@ export const client = sanityClient({
   token: process.env.NEXT_PUBLIC_SANITY_TOKEN,                        
 });
                         
-console.log("Sanity Client:", client);
+// console.log("Sanity Client:", client);
 
 const builder = imageUrlBuilder(client);
     
