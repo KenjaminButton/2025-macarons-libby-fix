@@ -11,7 +11,7 @@ export default function NavBar() {
   return (
     <div className="navbar-container">
       <div className="company-name">
-        <Link href="/">Mangez Macaron</Link>
+        <Link href="/">Kenneth's Macarons</Link>
 
         <div className="navbar" logo="true">
           <Link href="/">Home</Link>
