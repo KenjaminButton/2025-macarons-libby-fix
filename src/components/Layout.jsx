@@ -2,7 +2,7 @@ import React from "react";
 import Head from "next/head";
 import NavBar from "../components/Navbar";
 import DemoBanner from "./DemoBanner";
-import Footer from "./Footer";
+import Footer from "./Footer/Footer";
 
 export default function Layout({ children }) {
   return (
