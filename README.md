@@ -7,6 +7,9 @@
 - Javascript
 - Sanity.io
 - Stripe
+- CSS Modules
+- Dart SASS
+- TailwindCSS
 
 [Color Palette Generator: ](https://coolors.co/)
 
