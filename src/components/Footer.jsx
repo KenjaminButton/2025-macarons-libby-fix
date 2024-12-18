@@ -2,8 +2,8 @@ import React from "react";
 import Link from "next/link";
 import PaymentIcons from "../components/PaymentIcons";
 import { useStateContext } from "../context/StateContext";
+import MiniCart from "./MiniCart";
 
-// import MiniCart from "../MiniCart";
 import { AiFillInstagram, AiOutlineTwitter } from "react-icons/ai";
 
 export default function Footer ()  {
@@ -20,7 +20,7 @@ export default function Footer ()  {
             <Link href="/contact">Contact Us</Link>
           </div>
           <div>Contact: kenneth@macaronmagic.com</div>
-          {/* <MiniCart /> */}
+          <MiniCart />
         </div>
         <div className="icon-container">
           <PaymentIcons />

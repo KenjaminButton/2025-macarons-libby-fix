@@ -1,20 +1,17 @@
-import React, { useRef } from "react"; 
-// Importing React and useRef hook to handle DOM references.
-import Link from "next/link"; 
-// Importing Link from Next.js for client-side navigation.
-import { AiOutlineMinus, AiOutlinePlus, AiOutlineLeft, AiOutlineShopping } from "react-icons/ai"; 
-// Importing various icons from react-icons for UI elements.
-import { TiDeleteOutline } from "react-icons/ti"; 
-// Importing a delete icon for removing items from the cart.
-import toast from "react-hot-toast"; 
-// Importing toast for displaying notifications to users.
-import { useStateContext } from "../context/StateContext"; 
-// Importing a custom context hook for accessing the shopping cart state.
-import { urlFor } from "../lib/client"; 
-// Importing a function to handle image URLs for products.
+import React, { useRef } from "react";
+import Link from "next/link";
+import { AiOutlineMinus, AiOutlinePlus, AiOutlineLeft, AiOutlineShopping } from "react-icons/ai";
+import { TiDeleteOutline } from "react-icons/ti";
+import getStripe from "@/lib/getStripe";
+import toast from "react-hot-toast";
+import { useStateContext } from "../context/StateContext";
+import { urlFor } from "../lib/client";
+import { eUSLocale } from "../lib/utils";
+import { EmptyCart } from ".";
+
 
 const Cart = () => {
-  const cartRef = useRef(); 
+  const cartRef = useRef();
   // Creating a reference to the cart element for potential DOM manipulations.
   const {
     totalPrice,
@@ -23,24 +20,39 @@ const Cart = () => {
     setShowCart,
     toggleCartItemQuantity,
     onRemove,
-  } = useStateContext(); 
+  } = useStateContext();
   // Destructuring values and functions from the context, allowing access to cart state and behavior.
 
-  const eUSLocale = (x) => { 
-    // Function to format currency to US locale.
-    return x.toLocaleString("en-US", {
-      maximumFractionDigits: 2,
-      minimumFractionDigits: 2,
+  const handleCheckout = async () => {
+    const stripe = await getStripe()
+
+    const response = await fetch("/api/stripe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cartItems),
+    });
+
+    if (response.statusCode === 500) return;
+
+    const data = await response.json();
+    console.log('data:::', data)
+
+    toast.loading("Redirecting...");
+    stripe.redirectToCheckout({
+      sessionId: data.id
     });
   };
 
+
   return (
-    <div className="cart-wrapper" ref={cartRef}> 
+    <div className="cart-wrapper" ref={cartRef}>
       {/* Wrapping the cart component and assigning the cartRef for reference. */}
       <div className="cart-container">
-        <button 
-          type="button" 
-          className="cart-heading" 
+        <button
+          type="button"
+          className="cart-heading"
           onClick={() => setShowCart(false)}
         >
           <AiOutlineLeft />
@@ -49,61 +61,58 @@ const Cart = () => {
         </button>
 
         {cartItems.length < 1 && (
-          <div className="empty-cart"> 
-            {/* Conditional rendering for when the cart is empty. */}
-            <AiOutlineShopping size={150} />
-            <h3>Your shopping bag is empty</h3>
+          <EmptyCart>
             <Link href="/">
-              <button 
-                type="button" 
-                onClick={() => setShowCart(false)} 
+              <button
+                type="button"
+                onClick={() => setShowCart(false)}
                 className="btn"
               >
                 Continue Shopping
               </button>
             </Link>
-          </div>
+          </EmptyCart>
         )}
 
         <div className="product-container">
-          {cartItems.length >= 1 && 
-            cartItems.map((item) => ( 
+          {cartItems.length >= 1 &&
+            cartItems.map((item) => (
               // Mapping over cartItems to display each item.
               <>
-                <div className="product" key={item._id}> 
+                <div className="product" key={item._id}>
                   {/* Using item._id as a unique key to help React identify each element. */}
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="remove-item"
-                    onClick={() => onRemove(item)} 
-                    // Calling onRemove function from context to remove an item from the cart.
+                    onClick={() => onRemove(item)}
+                  // Calling onRemove function from context to remove an item from the cart.
                   >
                     <TiDeleteOutline />
                   </button>
 
-                  <img 
-                    src={urlFor(item?.image[0])} 
-                    className="cart-product-image" 
-                    // Using urlFor to get a valid URL for the product image.
+                  <img
+                    src={urlFor(item?.image[0])}
+                    className="cart-product-image"
+                  // Using urlFor to get a valid URL for the product image.
                   />
 
                   <div className="item-desc">
                     <div>
                       <span>{item.name}</span>
                       <span>
-                        : Quantity of {item.quantity} @ ${eUSLocale(item.price)} each 
+                        : Quantity of {item.quantity} @ ${eUSLocale(item.price)} each
                         {/* Displaying item quantity and formatted price. */}
                       </span>
                     </div>
                     <p className="quantity-desc">
-                      <span 
-                        className="minus" 
+                      <span
+                        className="minus"
                         onClick={() => toggleCartItemQuantity(item._id, "dec")}
                       >
                         <AiOutlineMinus />
                       </span>
-                      <span 
-                        className="plus" 
+                      <span
+                        className="plus"
                         onClick={() => toggleCartItemQuantity(item._id, "inc")}
                       >
                         <AiOutlinePlus />
@@ -120,9 +129,12 @@ const Cart = () => {
           <div className="cart-bottom">
             <div className="total">
               <h3>Subtotal:</h3>
-              <h3>${eUSLocale(totalPrice)} 
-              {/* Displaying formatted total price of all items in the cart. */}
-              </h3>
+              <h3>${eUSLocale(totalPrice)}</h3>
+            </div>
+            <div className="btn-container">
+              <button type="button" className="btn" onClick={handleCheckout}>
+                Pay with Stripe
+              </button>
             </div>
           </div>
         )}

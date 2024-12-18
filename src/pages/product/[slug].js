@@ -31,7 +31,7 @@ const ProductDetails = ({ product, products }) => {
   const [index, setIndex] = useState(0);
   
   // Logging the context values for debugging purposes
-  console.log('useStateContext:::', useStateContext());
+  // console.log('useStateContext:::', useStateContext());
 
   // Extracting functions and state from the context for quantity management and cart actions
   const { decQty, incQty, qty, onAdd, setShowCart } = useStateContext();
