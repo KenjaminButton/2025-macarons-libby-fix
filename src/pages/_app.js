@@ -1,6 +1,8 @@
 import { Toaster } from 'react-hot-toast'
 import "../styles/globals.css";
-import '../styles/index.scss' /* main styles */
+import "../styles/index.scss" /* main styles */
+import "../styles/mobile.css"; /* Needs to kick in AFTER globals.css */
+import "../styles/tablet.css"
 import Layout from '../components/Layout'
 
 
